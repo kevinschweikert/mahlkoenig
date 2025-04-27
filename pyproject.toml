@@ -1,0 +1,36 @@
+[project]
+name = "mahlkoenig"
+version = "0.1.0"
+description = "Async client library for the Mahlkönig X54 grinder"
+readme = "README.md"
+license = "MIT"
+license-files = [ "LICEN[CS]E*" ]
+authors = [ { name = "Kevin Schweikert", email = "kevin@kevinschweikert.de" } ]
+requires-python = ">=3.11"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "aiohttp>=3.11",
+  "pydantic>=2.11",
+  "pydantic-extra-types>=2.10.4",
+]
+
+urls.Issues = "https://github.com/kevinschweikert/mahlkoenig/issues"
+urls.Repository = "https://github.com/kevinschweikert/mahlkoenig.git"
+
+[dependency-groups]
+dev = [
+  "mitmproxy>=11.0.2",
+  "pytest>=8.3.5",
+  "pytest-asyncio>=0.26",
+  "ruff>=0.11.8",
+  "zeroconf>=0.146.5",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

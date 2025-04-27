@@ -1,0 +1,33 @@
+
+name: "Publish"
+
+on:
+  release:
+    types: ["published"]
+
+jobs:
+  run:
+    name: "Build and publish release"
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install python
+        run: uv python install 3.13
+
+      - name: Build
+        run: uv build
+
+      - name: Publish
+        run: uv publish
