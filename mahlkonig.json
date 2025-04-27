@@ -1,0 +1,142 @@
+[
+	{
+		"MsgId": 1,
+		"SessionId": 1,
+		"Login": "REDACTED"
+	},
+
+	{
+		"ResponseStatus": {
+			"SourceMessage": "Login",
+			"Success": true,
+			"Reason": ""
+		},
+		"MsgId": 1,
+		"SessionId": 1192944752
+	},
+
+	{
+		"MsgId": 2,
+		"SessionId": 1192944752,
+		"RequestType": "MachineInfo"
+	},
+
+	{
+		"MsgId": 3,
+		"SessionId": 1192944752,
+		"RequestType": "AutoSleepTime"
+	},
+
+	{
+		"MsgId": 4,
+		"SessionId": 1192944752,
+		"RequestType": "RecipeList"
+	},
+
+	{
+		"MsgId": 5,
+		"SessionId": 1192944752,
+		"RequestType": "SystemStatus"
+	},
+
+	{
+		"MachineInfo": {
+			"SerialNo": "1777D6",
+			"ProductNo": "HEM-E54-HMI-P02.115",
+			"SwVersion": "03.06",
+			"SwBuildNo": "3",
+			"DiscLifeTime": 130027,
+			"Hostname": "x54grinder-1777d6",
+			"ApMacAddress": "",
+			"CurrentApIpv4": "192.168.4.1",
+			"StaMacAddress": "c4:dd:57:c5:69:d4",
+			"CurrentStaIpv4": "10.10.0.149"
+		},
+		"MsgId": 2,
+		"SessionId": 1192944752
+	},
+	{
+		"AutoSleepTime": 1800,
+		"MsgId": 3,
+		"SessionId": 1192944752
+	},
+	{
+		"ResponseStatus": {
+			"SourceMessage": "RecipeList",
+			"Success": true,
+			"Reason": ""
+		},
+		"MsgId": 4,
+		"SessionId": 1192944752
+	},
+	{
+		"Recipe": {
+			"RecipeNo": 1,
+			"GrindTime": 115,
+			"Name": "onetake",
+			"BeanName": "Automatic",
+			"GrindingDegree": 50,
+			"BrewingType": 2,
+			"Guid": "e408f736-0086-4e74-a28c-048ce0465202",
+			"LastModifyIndex": 8,
+			"LastModifyTime": 1728658412
+		},
+		"MsgId": 193396736,
+		"SessionId": 1192944752
+	},
+	{
+		"Recipe": {
+			"RecipeNo": 2,
+			"GrindTime": 118,
+			"Name": "onetakebar",
+			"BeanName": "bar",
+			"GrindingDegree": 40,
+			"BrewingType": 2,
+			"Guid": "d70cae67-f6d3-469b-9ed6-4d9d791c7a71",
+			"LastModifyIndex": 1,
+			"LastModifyTime": 1728658307
+		},
+		"MsgId": 193462272,
+		"SessionId": 1192944752
+	},
+	{
+		"Recipe": {
+			"RecipeNo": 3,
+			"GrindTime": 130,
+			"Name": "",
+			"BeanName": "",
+			"GrindingDegree": 0,
+			"BrewingType": 0,
+			"Guid": "",
+			"LastModifyIndex": 30,
+			"LastModifyTime": 0
+		},
+		"MsgId": 193527808,
+		"SessionId": 1192944752
+	},
+	{
+		"Recipe": {
+			"RecipeNo": 4,
+			"GrindTime": 120,
+			"Name": "",
+			"BeanName": "",
+			"GrindingDegree": 0,
+			"BrewingType": 1,
+			"Guid": "",
+			"LastModifyIndex": 53,
+			"LastModifyTime": 0
+		},
+		"MsgId": 193593344,
+		"SessionId": 1192944752
+	},
+	{
+		"SystemStatus": {
+			"GrindRunning": false,
+			"ErrorCode": "",
+			"ActiveMenu": 4,
+			"GrindTimeMs": 11800
+		},
+		"MsgId": 5,
+		"SessionId": 1192944752
+	}
+]
