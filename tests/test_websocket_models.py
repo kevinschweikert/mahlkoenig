@@ -1,6 +1,9 @@
 from datetime import datetime, timezone
 from ipaddress import IPv4Address
 
+import pytest
+
+from mahlkoenig.exceptions import ProtocolError
 from mahlkoenig.models import (
     AutoSleepTimePreset,
     BrewType,
@@ -168,3 +171,10 @@ def test_parse_response_status_message_error():
     assert message.response_status.source_message == MessageType.Login
     assert message.response_status.success is False
     assert message.response_status.reason == "Wrong credentials"
+
+
+def test_parse_raises_protocol_error_on_invalid_data():
+    data = {"foo": "bar"}
+
+    with pytest.raises(ProtocolError):
+        parse(data)

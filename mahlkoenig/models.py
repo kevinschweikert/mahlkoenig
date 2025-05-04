@@ -2,12 +2,15 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Union
 
+from .exceptions import ProtocolError
+
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
     NonNegativeInt,
     TypeAdapter,
+    ValidationError,
     field_validator,
 )
 from pydantic.alias_generators import to_pascal
@@ -260,7 +263,10 @@ _ADAPTER = TypeAdapter(ResponseMessages)
 
 
 def parse(data: dict) -> ResponseMessage:
-    return _ADAPTER.validate_python(data)
+    try:
+        return _ADAPTER.validate_python(data)
+    except ValidationError as ex:
+        raise ProtocolError(f"Cannot parse {data!r}\n Exception {ex}") from ex
 
 
 def parse_statistics(text: str) -> Statistics:
