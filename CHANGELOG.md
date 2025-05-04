@@ -1,0 +1,37 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Changed
+
+- Changed `PositiveInt` to `NonNegativeInt` validation to allow for a 0 value
+- Raise `ProtocolError` instead of pydantic error
+
+### Fixed
+
+- Use `Grinder` instead of `X54Client` in README example
+
+### Removed
+
+- `print()` statement in receive function
+
+## [0.2.1]
+
+### Changed
+
+- Updated dependencies
+
+## [0.2.0]
+
+No changes. Just a version bump for PyPi
+
+## [0.1.0]
+
+### Added
+
+- Initial commit
