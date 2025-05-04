@@ -232,7 +232,7 @@ class Grinder:
                 raw: Dict[str, Any] = msg.json()
                 parsed = parse(raw)
             except (json.JSONDecodeError, ProtocolError):
-                _LOGGER.warning("Ignoring malformed frame: %s", msg.data)
+                _LOGGER.warning(f"Ignoring malformed frame: {msg.data}")
                 continue
             except Exception:
                 _LOGGER.exception("Unexpected error while parsing frame", exc_info=True)
