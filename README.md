@@ -30,7 +30,7 @@ from mahlkoenig import Grinder, AutoSleepTimePreset
 
 async def main():
     # Connect to your grinder (default password is empty)
-    async with X54Client(host="10.10.10.10") as client:
+    async with Grinder(host="10.10.10.10") as client:
         # Get machine information
         machine_info = await client.request_machine_info()
         print(f"Connected to X54 grinder: {machine_info.serial_no}")
