@@ -610,7 +610,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.11" },
-    { name = "pydantic", specifier = ">=2.11" },
+    { name = "pydantic", specifier = ">=2.10" },
     { name = "pydantic-extra-types", specifier = ">=2.10.4" },
 ]
 

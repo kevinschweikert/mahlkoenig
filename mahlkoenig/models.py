@@ -237,6 +237,7 @@ class RequestMessage(BaseModel):
         alias_generator=to_pascal,
         validate_by_name=True,
         serialize_by_alias=True,
+        populate_by_name=True,
     )
 
 
