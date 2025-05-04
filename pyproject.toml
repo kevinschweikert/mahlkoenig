@@ -1,6 +1,6 @@
 [project]
 name = "mahlkoenig"
-version = "0.2.1"
+version = "0.3.0"
 description = "Async client library for the Mahlkönig X54 grinder"
 readme = "README.md"
 license = "MIT"
@@ -19,6 +19,7 @@ dependencies = [
   "pydantic-extra-types>=2.10.4",
 ]
 
+urls.Changelog = "https://github.com/kevinschweikert/mahlkoenig/blob/main/CHANGELOG.md"
 urls.Issues = "https://github.com/kevinschweikert/mahlkoenig/issues"
 urls.Repository = "https://github.com/kevinschweikert/mahlkoenig.git"
 
