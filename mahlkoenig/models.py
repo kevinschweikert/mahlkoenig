@@ -6,7 +6,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    PositiveInt,
+    NonNegativeInt,
     TypeAdapter,
     field_validator,
 )
@@ -113,7 +113,7 @@ class MachineInfo(NetworkModel):
     serial_no: str
     product_no: str
     sw_version: str
-    sw_build_no: PositiveInt
+    sw_build_no: NonNegativeInt
     disc_life_time: timedelta
     hostname: str
 
@@ -123,7 +123,7 @@ class MachineInfo(NetworkModel):
 class SystemStatus(BaseModel):
     grind_running: bool
     error_code: str
-    active_menu: PositiveInt
+    active_menu: NonNegativeInt
     grind_time: timedelta = Field(alias="GrindTimeMs")
 
     @field_validator("grind_time", mode="after")
@@ -141,14 +141,14 @@ class WifiInfo(NetworkModel):
 
 
 class Recipe(BaseModel):
-    recipe_no: PositiveInt
+    recipe_no: NonNegativeInt
     grind_time: timedelta
     name: str
     bean_name: str
-    grinding_degree: PositiveInt
+    grinding_degree: NonNegativeInt
     brewing_type: BrewType
     guid: str
-    last_modify_index: PositiveInt
+    last_modify_index: NonNegativeInt
     last_modify_time: datetime
 
     @field_validator("grind_time", mode="after")
