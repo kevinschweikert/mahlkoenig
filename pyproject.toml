@@ -1,6 +1,6 @@
 [project]
 name = "mahlkoenig"
-version = "0.1.0"
+version = "0.2.0"
 description = "Async client library for the Mahlkönig X54 grinder"
 readme = "README.md"
 license = "MIT"
