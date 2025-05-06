@@ -11,7 +11,7 @@ from typing import Any, Dict, Final, Self
 import aiohttp
 from pydantic.networks import AnyHttpUrl
 
-from .exceptions import LoginError, ProtocolError
+from .exceptions import AuthenticationError, ProtocolError
 from .models import (
     AutoSleepMessage,
     AutoSleepTimePreset,
@@ -121,11 +121,22 @@ class Grinder:
 
     async def connect(self) -> None:
         """Open WebSocket connection and authenticate (idempotent)."""
-        if self._ws and not self._ws.closed:
-            return
-        self._ws = await self._session.ws_connect(self._ws_url)
-        self._receiver_task = asyncio.create_task(self._recv_loop(), name="x54-recv")
-        await self._login()
+        try:
+            if self._ws and not self._ws.closed:
+                return
+            self._ws = await self._session.ws_connect(self._ws_url)
+            self._receiver_task = asyncio.create_task(
+                self._recv_loop(), name="x54-recv"
+            )
+            await self._login()
+        except aiohttp.ClientConnectorError as err:
+            raise ConnectionError(f"Failed to connect to grinder: {err}") from err
+        except (
+            asyncio.TimeoutError,
+            aiohttp.SocketTimeoutError,
+            aiohttp.ServerTimeoutError,
+        ) as err:
+            raise ConnectionError("Connection to grinder timed out") from err
 
     async def close(self) -> None:
         """Terminate background task and close owned resources."""
@@ -202,7 +213,7 @@ class Grinder:
         try:
             await asyncio.wait_for(self._connected.wait(), timeout=5)
         except asyncio.TimeoutError as err:
-            raise LoginError("Grinder login timed out") from err
+            raise AuthenticationError("Grinder login timed out") from err
 
     async def _request(self, request: RequestMessage) -> ResponseMessage:
         msg_id = await self._send(request)
@@ -249,7 +260,7 @@ class Grinder:
                         self._connected.set()
                         self._session_id = message.session_id
                     else:
-                        raise LoginError(message.response_status.reason)
+                        raise AuthenticationError(message.response_status.reason)
             case MachineInfoMessage():
                 self._machine_info = message.machine_info
             case WifiInfoMessage():
