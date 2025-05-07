@@ -600,7 +600,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "mitmproxy", version = "11.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "mitmproxy", version = "12.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "mitmproxy", version = "12.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
@@ -711,7 +711,7 @@ wheels = [
 
 [[package]]
 name = "mitmproxy"
-version = "12.0.0"
+version = "12.0.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -746,7 +746,7 @@ dependencies = [
     { name = "zstandard", marker = "python_full_version >= '3.12'" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4c/d5/eb15f415c89862d4bb8142a2e30eaa78d02061996995c99a5dd51f671530/mitmproxy-12.0.0-py3-none-any.whl", hash = "sha256:b10c44f110f5d9b0b69568c4c6b491eb2ed2edb47f4eab661c7e0e952ad1d7d0", size = 1658825 },
+    { url = "https://files.pythonhosted.org/packages/13/de/1e598844ed8cb37b619b06df7587380ddf27ca2e00c44326f503fdb52cdc/mitmproxy-12.0.1-py3-none-any.whl", hash = "sha256:612597a61d532f2a5d5d61ac8e1294f6f880241aa2a88bdfadb2c6f2f8c2e96b", size = 1658994 },
 ]
 
 [[package]]
