@@ -250,6 +250,7 @@ class Grinder:
                 parsed = parse(raw)
             except (json.JSONDecodeError, MahlkoenigProtocolError):
                 _LOGGER.warning(f"Ignoring malformed frame: {msg.data}")
+                raise MahlkoenigProtocolError("Malformed frame", data=msg)
                 continue
             except Exception:
                 _LOGGER.exception("Unexpected error while parsing frame", exc_info=True)

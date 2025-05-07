@@ -267,7 +267,7 @@ def parse(data: dict) -> ResponseMessage:
     try:
         return _ADAPTER.validate_python(data)
     except ValidationError as ex:
-        raise MahlkoenigProtocolError(f"Cannot parse {data!r}\n Exception {ex}") from ex
+        raise MahlkoenigProtocolError("Parsing failed", data=data) from ex
 
 
 def parse_statistics(text: str) -> Statistics:

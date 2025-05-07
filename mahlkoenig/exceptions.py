@@ -13,7 +13,15 @@ class MahlkoenigAuthenticationError(MahlkoenigError):
 class MahlkoenigProtocolError(MahlkoenigError):
     """Raised when an unknown or malformed frame is received."""
 
-    pass
+    def __init__(self, message: str, data=None, *args, **kwargs):
+        super().__init__(message, *args, **kwargs)
+        self.data = data  # Store the received message as an attribute
+
+    def __str__(self):
+        base_str = super().__str__()
+        if self.data is not None:
+            return f"{base_str} (received: {self.data!r})"
+        return base_str
 
 
 class MahlkoenigConnectionError(MahlkoenigError):
