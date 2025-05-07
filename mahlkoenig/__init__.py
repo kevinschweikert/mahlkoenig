@@ -11,7 +11,11 @@ from typing import Any, Dict, Final, Self
 import aiohttp
 from pydantic.networks import AnyHttpUrl
 
-from .exceptions import AuthenticationError, ProtocolError
+from .exceptions import (
+    MahlkoenigAuthenticationError,
+    MahlkoenigProtocolError,
+    MahlkoenigConnectionError,
+)
 from .models import (
     AutoSleepMessage,
     AutoSleepTimePreset,
@@ -130,13 +134,15 @@ class Grinder:
             )
             await self._login()
         except aiohttp.ClientConnectorError as err:
-            raise ConnectionError(f"Failed to connect to grinder: {err}") from err
+            raise MahlkoenigConnectionError(
+                f"Failed to connect to grinder: {err}"
+            ) from err
         except (
             asyncio.TimeoutError,
             aiohttp.SocketTimeoutError,
             aiohttp.ServerTimeoutError,
         ) as err:
-            raise ConnectionError("Connection to grinder timed out") from err
+            raise MahlkoenigConnectionError("Connection to grinder timed out") from err
 
     async def close(self) -> None:
         """Terminate background task and close owned resources."""
@@ -213,7 +219,7 @@ class Grinder:
         try:
             await asyncio.wait_for(self._connected.wait(), timeout=5)
         except asyncio.TimeoutError as err:
-            raise AuthenticationError("Grinder login timed out") from err
+            raise MahlkoenigAuthenticationError("Grinder login timed out") from err
 
     async def _request(self, request: RequestMessage) -> ResponseMessage:
         msg_id = await self._send(request)
@@ -242,7 +248,7 @@ class Grinder:
             try:
                 raw: Dict[str, Any] = msg.json()
                 parsed = parse(raw)
-            except (json.JSONDecodeError, ProtocolError):
+            except (json.JSONDecodeError, MahlkoenigProtocolError):
                 _LOGGER.warning(f"Ignoring malformed frame: {msg.data}")
                 continue
             except Exception:
@@ -260,7 +266,9 @@ class Grinder:
                         self._connected.set()
                         self._session_id = message.session_id
                     else:
-                        raise AuthenticationError(message.response_status.reason)
+                        raise MahlkoenigAuthenticationError(
+                            message.response_status.reason
+                        )
             case MachineInfoMessage():
                 self._machine_info = message.machine_info
             case WifiInfoMessage():

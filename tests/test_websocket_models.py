@@ -3,7 +3,7 @@ from ipaddress import IPv4Address
 
 import pytest
 
-from mahlkoenig.exceptions import ProtocolError
+from mahlkoenig.exceptions import MahlkoenigProtocolError
 from mahlkoenig.models import (
     AutoSleepTimePreset,
     BrewType,
@@ -176,5 +176,5 @@ def test_parse_response_status_message_error():
 def test_parse_raises_protocol_error_on_invalid_data():
     data = {"foo": "bar"}
 
-    with pytest.raises(ProtocolError):
+    with pytest.raises(MahlkoenigProtocolError):
         parse(data)

@@ -1,22 +1,22 @@
-class GrinderError(Exception):
+class MahlkoenigError(Exception):
     """Base exception for all grinder errors."""
 
     pass
 
 
-class AuthenticationError(GrinderError):
+class MahlkoenigAuthenticationError(MahlkoenigError):
     """Raised when authentication with the grinder fails."""
 
     pass
 
 
-class ProtocolError(GrinderError):
+class MahlkoenigProtocolError(MahlkoenigError):
     """Raised when an unknown or malformed frame is received."""
 
     pass
 
 
-class ConnectionError(GrinderError):
+class MahlkoenigConnectionError(MahlkoenigError):
     """Error establishing connection to the grinder."""
 
     pass

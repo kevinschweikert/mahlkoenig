@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Union
 
-from .exceptions import ProtocolError
+from .exceptions import MahlkoenigProtocolError
 
 from pydantic import (
     BaseModel,
@@ -267,7 +267,7 @@ def parse(data: dict) -> ResponseMessage:
     try:
         return _ADAPTER.validate_python(data)
     except ValidationError as ex:
-        raise ProtocolError(f"Cannot parse {data!r}\n Exception {ex}") from ex
+        raise MahlkoenigProtocolError(f"Cannot parse {data!r}\n Exception {ex}") from ex
 
 
 def parse_statistics(text: str) -> Statistics:
