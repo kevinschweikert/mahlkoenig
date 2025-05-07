@@ -6,6 +6,8 @@ from zeroconf.asyncio import AsyncZeroconf, AsyncServiceBrowser, AsyncServiceInf
 
 from mahlkoenig import Grinder
 
+device_found_event = asyncio.Event()
+
 
 async def handle_service(zeroconf: Zeroconf, service_type: str, name: str):
     info = AsyncServiceInfo(service_type, name)
@@ -32,6 +34,8 @@ async def handle_service(zeroconf: Zeroconf, service_type: str, name: str):
             print("[statistics]", grinder.statistics)
     except Exception as e:
         print(f"[error] {e}")
+    finally:
+        device_found_event.set()
 
 
 def on_service_state_change(
@@ -54,8 +58,7 @@ async def main():
         async_zc.zeroconf, services, handlers=[on_service_state_change]
     )
     try:
-        # run forever until interrupted
-        await asyncio.Event().wait()
+        await device_found_event.wait()
     finally:
         await browser.async_cancel()
         await async_zc.async_close()
