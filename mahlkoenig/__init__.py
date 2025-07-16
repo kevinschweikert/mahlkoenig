@@ -248,9 +248,11 @@ class Grinder:
             try:
                 raw: Dict[str, Any] = msg.json()
                 parsed = parse(raw)
-            except (json.JSONDecodeError, MahlkoenigProtocolError):
-                _LOGGER.warning(f"Ignoring malformed frame: {msg.data}")
-                raise MahlkoenigProtocolError("Malformed frame", data=msg)
+            except json.JSONDecodeError:
+                _LOGGER.warning(f"Invalid JSON received: {msg.data}")
+                continue  # JSON invalide = ignorer
+            except MahlkoenigProtocolError:
+                _LOGGER.error(f"Malformed frame: {msg.data}")
                 continue
             except Exception:
                 _LOGGER.exception("Unexpected error while parsing frame", exc_info=True)
