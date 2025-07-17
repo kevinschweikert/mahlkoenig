@@ -135,6 +135,39 @@ def test_parse_recipe_message():
     assert message.recipe.last_modify_time == expected_time
 
 
+def test_parse_recipe_with_empty_names_message():
+    data = {
+        "MsgId": 193396738,
+        "SessionId": 1192944753,
+        "Recipe": {
+            "RecipeNo": 2,
+            "GrindTime": 115,
+            "Name": "",
+            "BeanName": "",
+            "GrindingDegree": 50,
+            "BrewingType": 2,
+            "Guid": "e408f736-0086-4e74-a28c-048ce0465203",
+            "LastModifyIndex": 9,
+            "LastModifyTime": 1728658413,
+        },
+    }
+
+    message = parse(data)
+    assert message.msg_id == 193396738
+    assert message.session_id == 1192944753
+    assert message.recipe.recipe_no == 2
+    assert message.recipe.grind_time.total_seconds() == 11.5
+    assert message.recipe.name == ""
+    assert message.recipe.bean_name == ""
+    assert message.recipe.grinding_degree == 50
+    assert message.recipe.brewing_type == BrewType.DOUBLE_SHOT
+    assert message.recipe.guid == "e408f736-0086-4e74-a28c-048ce0465203"
+    assert message.recipe.last_modify_index == 9
+
+    expected_time = datetime.utcfromtimestamp(1728658413).replace(tzinfo=timezone.utc)
+    assert message.recipe.last_modify_time == expected_time
+
+
 def test_parse_response_status_message_success():
     data = {
         "MsgId": 8,

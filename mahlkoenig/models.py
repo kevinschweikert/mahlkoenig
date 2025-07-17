@@ -146,8 +146,8 @@ class WifiInfo(NetworkModel):
 class Recipe(BaseModel):
     recipe_no: NonNegativeInt
     grind_time: timedelta
-    name: str
-    bean_name: str
+    name: str | None
+    bean_name: str | None
     grinding_degree: NonNegativeInt
     brewing_type: BrewType
     guid: str
