@@ -131,7 +131,7 @@ def test_parse_recipe_message():
     assert message.recipe.guid == "e408f736-0086-4e74-a28c-048ce0465202"
     assert message.recipe.last_modify_index == 8
 
-    expected_time = datetime.utcfromtimestamp(1728658412).replace(tzinfo=timezone.utc)
+    expected_time = datetime.fromtimestamp(1728658412, timezone.utc)
     assert message.recipe.last_modify_time == expected_time
 
 
@@ -164,7 +164,40 @@ def test_parse_recipe_with_empty_names_message():
     assert message.recipe.guid == "e408f736-0086-4e74-a28c-048ce0465203"
     assert message.recipe.last_modify_index == 9
 
-    expected_time = datetime.utcfromtimestamp(1728658413).replace(tzinfo=timezone.utc)
+    expected_time = datetime.fromtimestamp(1728658413, timezone.utc)
+    assert message.recipe.last_modify_time == expected_time
+
+
+def test_parse_empty_recipe():
+    data = {
+        "MsgId": 193396738,
+        "SessionId": 1192944753,
+        "Recipe": {
+            "RecipeNo": 1,
+            "GrindTime": 190,
+            "Name": "",
+            "BeanName": "",
+            "GrindingDegree": 0,
+            "BrewingType": 0,
+            "Guid": "",
+            "LastModifyIndex": 0,
+            "LastModifyTime": 0,
+        },
+    }
+
+    message = parse(data)
+    assert message.msg_id == 193396738
+    assert message.session_id == 1192944753
+    assert message.recipe.recipe_no == 1
+    assert message.recipe.grind_time.total_seconds() == 19.0
+    assert message.recipe.name == ""
+    assert message.recipe.bean_name == ""
+    assert message.recipe.grinding_degree == 0
+    assert message.recipe.brewing_type == BrewType.UNKNOWN
+    assert message.recipe.guid == ""
+    assert message.recipe.last_modify_index == 0
+
+    expected_time = datetime.fromtimestamp(0, timezone.utc)
     assert message.recipe.last_modify_time == expected_time
 
 

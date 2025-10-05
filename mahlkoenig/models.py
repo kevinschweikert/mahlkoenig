@@ -30,6 +30,7 @@ class AutoSleepTimePreset(int, Enum):
 
 
 class BrewType(int, Enum):
+    UNKNOWN = 0
     SINGLE_SHOT = 1
     DOUBLE_SHOT = 2
     V60 = 3
