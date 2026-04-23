@@ -6,7 +6,7 @@ readme = "README.md"
 license = "MIT"
 license-files = [ "LICEN[CS]E*" ]
 authors = [ { name = "Kevin Schweikert", email = "kevin@kevinschweikert.de" } ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
@@ -25,13 +25,13 @@ urls.Repository = "https://github.com/kevinschweikert/mahlkoenig.git"
 
 [dependency-groups]
 dev = [
-  "mitmproxy>=11.0.2",
+  "mitmproxy>=12.2.2",
   "pytest>=8.3.5",
   "pytest-asyncio>=0.26",
   "ruff>=0.11.8",
   "zeroconf>=0.146.5",
 ]
 
-[tool.pytest.ini_options]
+[tool.pytest]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
