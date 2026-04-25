@@ -156,9 +156,7 @@ class Grinder:
         ) as err:
             raise MahlkoenigConnectionError("Connection to grinder timed out") from err
 
-        self._receiver_task = asyncio.create_task(
-            self._recv_loop(), name="x54-recv"
-        )
+        self._receiver_task = asyncio.create_task(self._recv_loop(), name="x54-recv")
         try:
             await self._login()
         except BaseException:
