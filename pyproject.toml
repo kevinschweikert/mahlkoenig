@@ -9,7 +9,6 @@ authors = [ { name = "Kevin Schweikert", email = "kevin@kevinschweikert.de" } ]
 requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
