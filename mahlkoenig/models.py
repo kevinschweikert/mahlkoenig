@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Union
 
 from .exceptions import MahlkoenigProtocolError
 
@@ -80,7 +79,9 @@ class Statistics(BaseModel):
     total_errors_09: int
     total_errors_10: int
 
-    model_config = ConfigDict(alias_generator=to_pascal)
+    # `extra="ignore"` — the parsed export payload also contains metadata
+    # fields (ExportSessionId, GrinderName, ProductNo, …) that we don't model.
+    model_config = ConfigDict(alias_generator=to_pascal, extra="ignore")
 
     @field_validator(
         "total_grind_time",
@@ -95,8 +96,9 @@ class Statistics(BaseModel):
         "total_motor_on_time",
         mode="before",
     )
-    def _str_to_int(cls, value: str) -> int:
-        return int(value)
+    @classmethod
+    def _seconds_to_timedelta(cls, value: int | str) -> timedelta:
+        return timedelta(seconds=int(value))
 
 
 class NetworkModel(BaseModel):
@@ -130,10 +132,10 @@ class SystemStatus(BaseModel):
     active_menu: NonNegativeInt
     grind_time: timedelta = Field(alias="GrindTimeMs")
 
-    @field_validator("grind_time", mode="after")
+    @field_validator("grind_time", mode="before")
     @classmethod
-    def from_milliseconds(cls, value: timedelta) -> timedelta:
-        return timedelta(milliseconds=value.total_seconds())
+    def _ms_to_timedelta(cls, value: int) -> timedelta:
+        return timedelta(milliseconds=value)
 
     model_config = ConfigDict(extra="forbid", alias_generator=to_pascal)
 
@@ -155,10 +157,10 @@ class Recipe(BaseModel):
     last_modify_index: NonNegativeInt
     last_modify_time: datetime
 
-    @field_validator("grind_time", mode="after")
+    @field_validator("grind_time", mode="before")
     @classmethod
-    def from_deciseconds(cls, value: timedelta) -> timedelta:
-        return timedelta(milliseconds=100 * value.total_seconds())
+    def _ds_to_timedelta(cls, value: int) -> timedelta:
+        return timedelta(milliseconds=100 * value)
 
     model_config = ConfigDict(extra="forbid", alias_generator=to_pascal)
 
@@ -217,14 +219,14 @@ class ResponseStatusMessage(ResponseMessage):
     model_config = ConfigDict(extra="forbid", alias_generator=to_pascal)
 
 
-ResponseMessages = Union[
-    MachineInfoMessage,
-    SystemStatusMessage,
-    WifiInfoMessage,
-    AutoSleepMessage,
-    RecipeMessage,
-    ResponseStatusMessage,
-]
+ResponseMessages = (
+    MachineInfoMessage
+    | SystemStatusMessage
+    | WifiInfoMessage
+    | AutoSleepMessage
+    | RecipeMessage
+    | ResponseStatusMessage
+)
 
 # ────────── requests ──────────
 
@@ -254,11 +256,7 @@ class SetAutoSleepTimeRequest(RequestMessage):
     auto_sleep_time: AutoSleepTimePreset
 
 
-RequestMessages = Union[
-    LoginRequest,
-    SimpleRequest,
-    SetAutoSleepTimeRequest,
-]
+RequestMessages = LoginRequest | SimpleRequest | SetAutoSleepTimeRequest
 
 
 _ADAPTER = TypeAdapter(ResponseMessages)
