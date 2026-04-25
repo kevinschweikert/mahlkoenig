@@ -1,3 +1,5 @@
+from typing import Any
+from ipaddress import IPv4Address, IPv6Address
 from datetime import datetime, timedelta
 from enum import Enum
 
@@ -103,7 +105,7 @@ class Statistics(BaseModel):
 
 class NetworkModel(BaseModel):
     ap_mac_address: MacAddress | None
-    current_ap_ipv4: IPvAnyAddress | None
+    current_ap_ipv4: IPv4Address | IPv6Address | None
     sta_mac_address: MacAddress
     current_sta_ipv4: IPvAnyAddress
 
@@ -262,7 +264,7 @@ RequestMessages = LoginRequest | SimpleRequest | SetAutoSleepTimeRequest
 _ADAPTER = TypeAdapter(ResponseMessages)
 
 
-def parse(data: dict) -> ResponseMessage:
+def parse(data: dict) -> ResponseMessages:
     try:
         return _ADAPTER.validate_python(data)
     except ValidationError as ex:
@@ -270,7 +272,7 @@ def parse(data: dict) -> ResponseMessage:
 
 
 def parse_statistics(text: str) -> Statistics:
-    stats: dict[str, str] = {}
+    stats: dict[str, Any] = {}
 
     for line in text.splitlines():
         match line.strip().rstrip(";").split(";", 1):

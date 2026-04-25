@@ -5,11 +5,20 @@ import pytest
 
 from mahlkoenig.exceptions import MahlkoenigProtocolError
 from mahlkoenig.models import (
+    AutoSleepMessage,
     AutoSleepTimePreset,
     BrewType,
     MachineInfo,
     MachineInfoMessage,
     MessageType,
+    Recipe,
+    RecipeMessage,
+    ResponseStatus,
+    ResponseStatusMessage,
+    SystemStatus,
+    SystemStatusMessage,
+    WifiInfo,
+    WifiInfoMessage,
     parse,
 )
 
@@ -62,6 +71,8 @@ def test_parse_system_status_message():
     }
 
     message = parse(data)
+    assert isinstance(message, SystemStatusMessage)
+    assert isinstance(message.system_status, SystemStatus)
     assert message.msg_id == 5
     assert message.session_id == 1192944752
     assert message.system_status.grind_running is False
@@ -84,6 +95,8 @@ def test_parse_wifi_info_message():
     }
 
     message = parse(data)
+    assert isinstance(message, WifiInfoMessage)
+    assert isinstance(message.wifi_info, WifiInfo)
     assert message.msg_id == 6
     assert message.session_id == 1192944752
     assert message.wifi_info.ap_mac_address is None
@@ -97,6 +110,8 @@ def test_parse_auto_sleep_message():
     data = {"MsgId": 7, "SessionId": 1192944752, "AutoSleepTime": 1800}
 
     message = parse(data)
+    assert isinstance(message, AutoSleepMessage)
+    assert isinstance(message.auto_sleep_time, AutoSleepTimePreset)
     assert message.msg_id == 7
     assert message.session_id == 1192944752
     assert message.auto_sleep_time == AutoSleepTimePreset.MIN_30
@@ -120,6 +135,8 @@ def test_parse_recipe_message():
     }
 
     message = parse(data)
+    assert isinstance(message, RecipeMessage)
+    assert isinstance(message.recipe, Recipe)
     assert message.msg_id == 193396736
     assert message.session_id == 1192944752
     assert message.recipe.recipe_no == 1
@@ -153,6 +170,8 @@ def test_parse_recipe_with_empty_names_message():
     }
 
     message = parse(data)
+    assert isinstance(message, RecipeMessage)
+    assert isinstance(message.recipe, Recipe)
     assert message.msg_id == 193396738
     assert message.session_id == 1192944753
     assert message.recipe.recipe_no == 2
@@ -186,6 +205,8 @@ def test_parse_empty_recipe():
     }
 
     message = parse(data)
+    assert isinstance(message, RecipeMessage)
+    assert isinstance(message.recipe, Recipe)
     assert message.msg_id == 193396738
     assert message.session_id == 1192944753
     assert message.recipe.recipe_no == 1
@@ -213,6 +234,8 @@ def test_parse_response_status_message_success():
     }
 
     message = parse(data)
+    assert isinstance(message, ResponseStatusMessage)
+    assert isinstance(message.response_status, ResponseStatus)
     assert message.msg_id == 8
     assert message.session_id == 1192944752
     assert message.response_status.source_message == MessageType.RecipeList
@@ -232,6 +255,8 @@ def test_parse_response_status_message_error():
     }
 
     message = parse(data)
+    assert isinstance(message, ResponseStatusMessage)
+    assert isinstance(message.response_status, ResponseStatus)
     assert message.msg_id == 8
     assert message.session_id == 1192944752
     assert message.response_status.source_message == MessageType.Login

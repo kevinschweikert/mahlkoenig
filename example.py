@@ -17,6 +17,10 @@ async def handle_service(zeroconf: Zeroconf, service_type: str, name: str):
 
     host = info.server
     port = info.port
+
+    assert host is not None
+    assert port is not None
+
     print(f"[discovered] {host}:{port}")
 
     try:
