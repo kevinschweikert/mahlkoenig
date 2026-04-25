@@ -4,15 +4,18 @@ import json
 import logging
 from urllib.parse import urljoin
 from contextlib import suppress
+from datetime import timedelta
 from types import TracebackType
 from typing import Any, Final, Self
 
 import aiohttp
+from pydantic.networks import AnyHttpUrl
 
 from .exceptions import (
     MahlkoenigAuthenticationError,
     MahlkoenigProtocolError,
     MahlkoenigConnectionError,
+    MahlkoenigTimeoutError,
 )
 from .models import (
     AutoSleepMessage,
@@ -39,8 +42,8 @@ from .models import (
 
 _LOGGER: Final = logging.getLogger(__name__)
 
-_DEFAULT_REQUEST_TIMEOUT: Final = 10.0
-_DEFAULT_LOGIN_TIMEOUT: Final = 5.0
+_DEFAULT_REQUEST_TIMEOUT: Final = timedelta(seconds=10)
+_DEFAULT_LOGIN_TIMEOUT: Final = timedelta(seconds=5)
 
 
 class Grinder:
@@ -53,8 +56,14 @@ class Grinder:
         password: str = "",
         *,
         session: aiohttp.ClientSession | None = None,
-        request_timeout: float = _DEFAULT_REQUEST_TIMEOUT,
+        request_timeout: timedelta = _DEFAULT_REQUEST_TIMEOUT,
     ) -> None:
+        # mDNS / zeroconf often returns hostnames with a trailing dot;
+        # strip it so the pydantic URL validator below accepts the host.
+        host = host.rstrip(".")
+        # Validate host & port via pydantic. Raises ValidationError on
+        # malformed input (bad chars, port out of range, etc.).
+        AnyHttpUrl(f"http://{host}:{port}")
         self._ws_url: Final = f"ws://{host}:{port}"
         self._http_url: Final = f"http://{host}"
         self._password: Final = password
@@ -234,20 +243,14 @@ class Grinder:
                 LoginRequest(login=self._password),
                 timeout=_DEFAULT_LOGIN_TIMEOUT,
             )
-        except MahlkoenigConnectionError as err:
-            # Surface a timeout during login as an authentication error so
-            # callers can distinguish it from a generic connection error.
-            if "timed out" in str(err):
-                raise MahlkoenigAuthenticationError(
-                    "Grinder login timed out"
-                ) from err
-            raise
+        except MahlkoenigTimeoutError as err:
+            raise MahlkoenigAuthenticationError("Grinder login timed out") from err
 
     async def _request(
         self,
         request: RequestMessage,
         *,
-        timeout: float | None = None,
+        timeout: timedelta | None = None,
     ) -> ResponseMessage:
         msg_id = await self._send(request)
         fut: asyncio.Future[ResponseMessage] = (
@@ -256,9 +259,11 @@ class Grinder:
         self._pending[msg_id] = fut
         effective_timeout = timeout if timeout is not None else self._request_timeout
         try:
-            return await asyncio.wait_for(fut, timeout=effective_timeout)
+            return await asyncio.wait_for(
+                fut, timeout=effective_timeout.total_seconds()
+            )
         except asyncio.TimeoutError as err:
-            raise MahlkoenigConnectionError(
+            raise MahlkoenigTimeoutError(
                 f"Request {type(request).__name__} timed out"
             ) from err
         finally:

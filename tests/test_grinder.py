@@ -78,6 +78,7 @@ async def test_request_statistics(mock_grinder, monkeypatch):
     monkeypatch.setattr(mahlkoenig, "parse_statistics", lambda body: sentinel)
 
     mock_resp = AsyncMock()
+    mock_resp.status = 200
     mock_resp.text = AsyncMock(return_value="raw-body")
 
     @asynccontextmanager

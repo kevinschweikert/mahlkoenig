@@ -25,6 +25,12 @@ class MahlkoenigProtocolError(MahlkoenigError):
 
 
 class MahlkoenigConnectionError(MahlkoenigError):
-    """Error establishing connection to the grinder."""
+    """Error establishing or maintaining a connection to the grinder."""
+
+    pass
+
+
+class MahlkoenigTimeoutError(MahlkoenigConnectionError):
+    """Raised when a request to the grinder does not complete in time."""
 
     pass
