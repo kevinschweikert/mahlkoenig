@@ -44,6 +44,8 @@ _LOGGER: Final = logging.getLogger(__name__)
 
 _DEFAULT_REQUEST_TIMEOUT: Final = timedelta(seconds=10)
 _DEFAULT_LOGIN_TIMEOUT: Final = timedelta(seconds=5)
+_DEFAULT_CONNECT_TIMEOUT: Final = timedelta(seconds=10)
+_DEFAULT_HEARTBEAT: Final = timedelta(seconds=20)
 
 
 class Grinder:
@@ -74,6 +76,7 @@ class Grinder:
         self._ws: aiohttp.ClientWebSocketResponse | None = None
         self._receiver_task: asyncio.Task[None] | None = None
         self._connected = asyncio.Event()
+        self._send_lock: Final = asyncio.Lock()
 
         self._msg_id_iter: Final = itertools.count(1)
         self._session_id: int = 1
@@ -144,7 +147,13 @@ class Grinder:
             self._session = aiohttp.ClientSession()
 
         try:
-            self._ws = await self._session.ws_connect(self._ws_url)
+            self._ws = await asyncio.wait_for(
+                self._session.ws_connect(
+                    self._ws_url,
+                    heartbeat=_DEFAULT_HEARTBEAT.total_seconds(),
+                ),
+                timeout=_DEFAULT_CONNECT_TIMEOUT.total_seconds(),
+            )
         except aiohttp.ClientConnectorError as err:
             raise MahlkoenigConnectionError(
                 f"Failed to connect to grinder: {err}"
@@ -154,7 +163,7 @@ class Grinder:
             aiohttp.SocketTimeoutError,
             aiohttp.ServerTimeoutError,
         ) as err:
-            raise MahlkoenigConnectionError("Connection to grinder timed out") from err
+            raise MahlkoenigTimeoutError("Connection to grinder timed out") from err
 
         self._receiver_task = asyncio.create_task(self._recv_loop(), name="x54-recv")
         try:
@@ -250,14 +259,15 @@ class Grinder:
         *,
         timeout: timedelta | None = None,
     ) -> ResponseMessage:
-        msg_id = await self._send(request)
+        msg_id = next(self._msg_id_iter)
         fut: asyncio.Future[ResponseMessage] = (
             asyncio.get_running_loop().create_future()
         )
         self._pending[msg_id] = fut
         effective_timeout = timeout if timeout is not None else self._request_timeout
         try:
-            return await asyncio.wait_for(
+            await self._send(request, msg_id)
+            response = await asyncio.wait_for(
                 fut, timeout=effective_timeout.total_seconds()
             )
         except asyncio.TimeoutError as err:
@@ -267,17 +277,23 @@ class Grinder:
         finally:
             self._pending.pop(msg_id, None)
 
-    async def _send(self, request: RequestMessage) -> int:
-        if not self._ws or self._ws.closed:
-            raise MahlkoenigConnectionError("WebSocket not connected")
+        return response
 
-        msg_id = next(self._msg_id_iter)
+    async def _send(self, request: RequestMessage, msg_id: int) -> None:
         outgoing = request.model_copy(
             update={"msg_id": msg_id, "session_id": self._session_id}
         )
         payload = outgoing.model_dump(by_alias=True)
-        await self._ws.send_json(payload)
-        return msg_id
+        async with self._send_lock:
+            ws = self._ws
+            if ws is None or ws.closed:
+                raise MahlkoenigConnectionError("WebSocket not connected")
+            try:
+                await ws.send_json(payload)
+            except (ConnectionResetError, aiohttp.ClientError) as err:
+                raise MahlkoenigConnectionError(
+                    f"Failed to send request: {err}"
+                ) from err
 
     async def _recv_loop(self) -> None:
         try:
