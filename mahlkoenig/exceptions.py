@@ -1,13 +1,9 @@
 class MahlkoenigError(Exception):
     """Base exception for all grinder errors."""
 
-    pass
-
 
 class MahlkoenigAuthenticationError(MahlkoenigError):
     """Raised when authentication with the grinder fails."""
-
-    pass
 
 
 class MahlkoenigProtocolError(MahlkoenigError):
@@ -27,10 +23,6 @@ class MahlkoenigProtocolError(MahlkoenigError):
 class MahlkoenigConnectionError(MahlkoenigError):
     """Error establishing or maintaining a connection to the grinder."""
 
-    pass
-
 
 class MahlkoenigTimeoutError(MahlkoenigConnectionError):
     """Raised when a request to the grinder does not complete in time."""
-
-    pass

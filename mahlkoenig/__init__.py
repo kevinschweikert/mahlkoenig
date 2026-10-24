@@ -2,19 +2,19 @@ import asyncio
 import itertools
 import json
 import logging
-from urllib.parse import urljoin
 from contextlib import suppress
 from datetime import timedelta
 from types import TracebackType
 from typing import Any, Final, Self
+from urllib.parse import urljoin
 
 import aiohttp
 from pydantic.networks import AnyHttpUrl
 
 from .exceptions import (
     MahlkoenigAuthenticationError,
-    MahlkoenigProtocolError,
     MahlkoenigConnectionError,
+    MahlkoenigProtocolError,
     MahlkoenigTimeoutError,
 )
 from .models import (
@@ -159,7 +159,7 @@ class Grinder:
                 f"Failed to connect to grinder: {err}"
             ) from err
         except (
-            asyncio.TimeoutError,
+            TimeoutError,
             aiohttp.SocketTimeoutError,
             aiohttp.ServerTimeoutError,
         ) as err:
@@ -270,7 +270,7 @@ class Grinder:
             response = await asyncio.wait_for(
                 fut, timeout=effective_timeout.total_seconds()
             )
-        except asyncio.TimeoutError as err:
+        except TimeoutError as err:
             raise MahlkoenigTimeoutError(
                 f"Request {type(request).__name__} timed out"
             ) from err

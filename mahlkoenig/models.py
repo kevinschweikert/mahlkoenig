@@ -1,9 +1,7 @@
-from typing import Any
-from ipaddress import IPv4Address, IPv6Address
 from datetime import datetime, timedelta
 from enum import Enum
-
-from .exceptions import MahlkoenigProtocolError
+from ipaddress import IPv4Address, IPv6Address
+from typing import Any
 
 from pydantic import (
     BaseModel,
@@ -17,6 +15,8 @@ from pydantic import (
 from pydantic.alias_generators import to_pascal
 from pydantic.networks import IPvAnyAddress
 from pydantic_extra_types.mac_address import MacAddress
+
+from .exceptions import MahlkoenigProtocolError
 
 
 class AutoSleepTimePreset(int, Enum):

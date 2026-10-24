@@ -28,6 +28,7 @@ pip install mahlkoenig
 import asyncio
 from mahlkoenig import Grinder, AutoSleepTimePreset
 
+
 async def main():
     # Connect to your grinder (default password is empty)
     async with Grinder(host="10.10.10.10") as client:
@@ -35,20 +36,21 @@ async def main():
         machine_info = await client.request_machine_info()
         print(f"Connected to X54 grinder: {machine_info.serial_no}")
         print(f"Software version: {machine_info.sw_version}")
-        
+
         # Get all recipes
         recipes = await client.request_recipe_list()
         for recipe_no, recipe in recipes.items():
             print(f"Recipe {recipe_no}: {recipe.name} - {recipe.grind_time}")
-        
+
         # Set auto sleep time to 10 minutes
         await client.set_auto_sleep_time(AutoSleepTimePreset.MIN_10)
         print(f"Set auto sleep time to 10min")
-        
+
         # Get grinding statistics
         stats = await client.request_statistics()
         print(f"Total grinding shots: {stats.total_grind_shots}")
         print(f"Total grinding time: {stats.total_grind_time}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

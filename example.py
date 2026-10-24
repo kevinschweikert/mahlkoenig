@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from zeroconf import ServiceStateChange, Zeroconf
-from zeroconf.asyncio import AsyncZeroconf, AsyncServiceBrowser, AsyncServiceInfo
+from zeroconf.asyncio import AsyncServiceBrowser, AsyncServiceInfo, AsyncZeroconf
 
 from mahlkoenig import Grinder
 
@@ -36,7 +36,7 @@ async def handle_service(zeroconf: Zeroconf, service_type: str, name: str):
             print("[auto sleep time]", grinder.auto_sleep_time)
             print("[recipes]", grinder.recipes)
             print("[statistics]", grinder.statistics)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"[error] {e}")
     finally:
         device_found_event.set()
